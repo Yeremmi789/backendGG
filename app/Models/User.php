@@ -32,6 +32,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function cestas()
+    {
+        return $this->hasMany(Cesta::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
