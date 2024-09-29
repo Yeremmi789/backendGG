@@ -33,7 +33,15 @@ class userController extends Controller
         $usuario->activo = 1;
         // $usuario->ultimo_acceso = date('Y-m-d H:i:s');
         
+        // SE PUEDE CREAR UNA TABLA DONDE SE COLOQUE UNA TABLA PARA CLIENTES (EMPRESAS)
+        // Le asignamos el rol de Cliente
+        // $usuario->assignRole('cliente');
+        // Le asignamos el rol de usuario
+        $usuario->assignRole('usuario');
+        // $usuario->assignRole('admin');
+        
         $usuario->save();
+
 
         return response()->json($usuario, Response::HTTP_CREATED);
 
