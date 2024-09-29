@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\DescuentosController;
+use App\Http\Controllers\JuegosController;
+use App\Http\Controllers\userController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/users', function () {
@@ -19,3 +21,9 @@ Route::get('/', function(){
 
 
 Route::get("pruebass", [DescuentosController::class, 'pruebas']);
+Route::get('carrusel', [JuegosController::class, 'getCarruselJuegos']);
+Route::get('info_Juego/{id}', [JuegosController::class, 'getJuegoCompleto']);
+Route::get('galeria/{id}', [JuegosController::class, 'getGaleria']);
+Route::get('carruselNormal', [JuegosController::class, 'getNormal']);
+Route::post('registrarse', [userController::class, 'registro']);
+Route::post('loguearse', [userController::class, 'login']);
