@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cookie;
 
+// ASIGNAR ROLES O CAMBIAR
+// EJEMPLO DE IMPLEMENTACIÓN AL ULTIMO
+// $usuario->syncRoles('admin'); // Reemplaza el rol actual con 'admin'
+// $usuario->syncRoles(['editor', 'admin']); // El usuario ahora tiene los roles 'editor' y 'admin'
+// $usuario->removeRole('user'); // Remueve solo el rol 'user'
+// $usuario->assignRole('editor'); // Ahora el usuario tiene tanto 'user' como 'editor' - es para asignar rol al usuario y si ya tiene uno ahora tendra dos
+
 
 class userController extends Controller
 {
@@ -34,11 +41,7 @@ class userController extends Controller
         // $usuario->ultimo_acceso = date('Y-m-d H:i:s');
         
         // SE PUEDE CREAR UNA TABLA DONDE SE COLOQUE UNA TABLA PARA CLIENTES (EMPRESAS)
-        // Le asignamos el rol de Cliente
-        // $usuario->assignRole('cliente');
-        // Le asignamos el rol de usuario
         $usuario->assignRole('usuario');
-        // $usuario->assignRole('admin');
         
         $usuario->save();
 
@@ -63,6 +66,7 @@ class userController extends Controller
 
         if(Auth::attempt($credenciales)){
             $usuario = User::where('email', '=', $buscarUsuario)->first();
+            $rol = $usuario->getRoleNames();
 
             $auth = Auth::user();
             $token = $auth->createToken('token')->plainTextToken;
@@ -73,6 +77,7 @@ class userController extends Controller
             "id"=>$usuario->id,
             "usuario"=>$usuario->usuario,
             "email"=>$usuario->email,
+            "rol" => $rol
             
         ], 200);
 
@@ -87,8 +92,53 @@ class userController extends Controller
 
     }
 
+
+    public function getUsuario($id){
+        $usuario = new User();
+
+        $user = User::where('id', '=', $id)->first();
+        //$user->assignRole('usuario');
+        $rol = $user->getRoleNames();
+
+        // Ocultar la relación de roles en la respuesta del usuario
+        $user->makeHidden('roles');
+
+        return response()->json([
+            'Usuario' => $user,
+            'Roles' => $rol
+        ]);
+    }
+
     public function recuperarContrasenia(){
 
     }
 
 }
+
+
+
+
+
+// Ejemplo Completo de Cambio de Rol
+
+
+// public function cambiarRol(Request $peticion, User $usuario)
+// {
+//     // Validar que el nuevo rol existe y que se pasa en la petición
+//     $peticion->validate([
+//         'rol' => 'required|exists:roles,name', // Asegúrate de que el rol exista en la tabla roles
+//     ]);
+
+//     // Reemplazar el rol actual del usuario con el nuevo rol
+//     $usuario->syncRoles($peticion->rol);
+
+//     return response()->json([
+//         'message' => 'Rol actualizado correctamente',
+//         'usuario' => $usuario,
+//     ], 200);
+// }
+
+// Consideraciones Importantes
+// syncRoles(): Este método es útil si siempre quieres que el usuario tenga exactamente el rol que le pasas, eliminando cualquier rol anterior.
+// assignRole(): Solo asigna roles sin eliminar otros. Esto es útil si quieres que el usuario pueda tener varios roles.
+// removeRole(): Remueve un rol específico del usuario sin afectar otros roles que pueda tener.

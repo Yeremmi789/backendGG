@@ -8,23 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Cesta extends Model
 {
     use HasFactory;
+    protected $table = 'cesta'; // Cambia 'nombre_real_de_la_tabla' por el nombre correcto
 
     // Relación: una cesta pertenece a un usuario
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'users_id');
     }
 
-    public function juegos()
+    // Relación: una cesta pertenece a un juego
+    public function juego()
     {
-        return $this->belongsTo(Juegos::class);
+        return $this->belongsTo(Juegos::class, 'juego_id');
     }
-
-    // Relación: muchos a muchos con productos (usando una tabla pivote)
-    // public function juegos()
-    // {
-    //     return $this->belongsToMany(Juegos::class, 'cesta_productos')
-    //                 ->withPivot('cantidad', 'precio_unitario')
-    //                 ->withTimestamps();
-    // }
 }
