@@ -44,7 +44,7 @@ class JuegosController extends Controller
             ->select('juegos.*', 'logo_juegos.*') // seleccionamos los campos necesarios
             ->where('juegos.id', '=', $id) // id de búsqueda
             ->first(); //SE COLOCA FIRST para que devuelva llaves {} y no corchetes []
-        // en este caso es get, porque como se consultan muchas imagenes con el mismo id del juego
+        // en este caso es get, porque como se consultan muchas imagenes con el mismo id del juego //... en este caso no, porque la galería es en otra consulta
 
         // $imagenesGaleria = Galeria_Juegos::where('juego_id', '=', $id)
         // ->pluck('ruta_img');
@@ -107,13 +107,13 @@ class JuegosController extends Controller
         // $juego = User::join('cesta','cesta.users_id', '=', 'users.id')
         // ->join('juegos','juegos.id', '=', '');
 
-        $cestasInfo = Cesta::with(['user', 'juego'])
+        $cestasInfo = Cesta::with(['user:id,usuario', 'juego:id,titulo,portada,versionJuego,precio,descuento,precioDescontado'])
             ->where('activo', 1) // Puedes filtrar por cestas activas
             ->get();
 
 
         return response()->json([
-            "Cesta creada" => $cesta,
+            // "Cesta creada" => $cesta,
             "Info de la cesta" => $cestasInfo
         ]);
     }
@@ -149,6 +149,54 @@ class JuegosController extends Controller
         // }
     }
 
+
+    public function desactivarCesta($id){
+        $productoEncontrado = Cesta::find($id);
+
+        if($productoEncontrado){
+            // Modifica el campo 'activo' y guarda los cambios
+            $productoEncontrado->activo = 0;
+            $productoEncontrado->save();
+
+            return response()->json("Producto desactivado");
+        }else{
+            return response()->json('producto no encontrado', 200); //colocar el 200 aunque no se encuentre el elemento, la función ha hecho su trabajo y no ha ocurrido algún error
+        }
+    }
+
+
+    public function revisarCesta($id){
+
+        $bandera = false;
+
+
+        // Consulta los productos en la cesta que están activos para este usuario
+        $consulta = Cesta::select("juego_id", 'id')
+        ->where("users_id", '=', $id)
+        ->where('activo', '=', 1)
+        ->get();
+
+
+        if($consulta->isNotEmpty()){
+            $bandera = !$bandera;
+
+            // return response()->json($bandera);
+            return response()->json([
+                "ok" => $bandera,
+                "Juegos_ID" => $consulta
+            ],200);
+
+        }else{
+            return response()->json($bandera,200);
+        }
+        
+
+    }
+
+    
+
+    
+
     public function getCesta2($id)
     {
         $cestas = DB::table('cestas')
@@ -177,4 +225,16 @@ class JuegosController extends Controller
     public function getCarruselDestacados() {}
 
     public function getDescuentos() {}
+
+
+
+    // FUNCIONES PARA GESTIONAR LOS JUEGOS
+
+    public function getCategoria($id){
+
+        
+
+    }
+
+
 }

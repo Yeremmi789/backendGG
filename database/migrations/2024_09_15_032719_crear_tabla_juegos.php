@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('version del juego')->nullable(); //Juego Base porDefecto
 
             $table->float('precio',5,2);
-            $table->float('descuento',2,0);
-            $table->float('precioDescontado',5,2);
+            $table->float('descuento',2,0)->nullable();
+            $table->float('precioDescontado',5,2)->nullable();
             $table->text('Descripcion');
 
-            $table->date('inicio_descuento');
-            $table->date('fin_descuento');
+            $table->date('inicio_descuento')->nullable();
+            $table->date('fin_descuento')->nullable();
             
             $table->unsignedBigInteger('categoria_id')->nullable();
             $table->foreign('categoria_id')->references('id')->on('categorias');

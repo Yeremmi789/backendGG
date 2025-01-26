@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\DescuentosController;
 use App\Http\Controllers\JuegosController;
 use App\Http\Controllers\userController;
@@ -41,3 +42,10 @@ Route::post('loguearse', [userController::class, 'login']);
 Route::get('usuario/{id}', [userController::class, 'getUsuario']);
 Route::post('cesta', [JuegosController::class, 'addCesta']);
 Route::get('miCesta/{id}',[JuegosController::class,'getCesta']);
+Route::put('cesta/{id}/desactivar', [JuegosController::class, 'desactivarCesta']);
+Route::get('cesta/{id}/revisar', [JuegosController::class, 'revisarCesta']);
+
+
+// JUEGOS REGISTRO, EDICIÓN
+Route::get('categorias', [CategoriasController::class, 'getCategorias']);
+Route::get('categoria_actual/{id}', [CategoriasController::class, 'getCategoria_juego']);
